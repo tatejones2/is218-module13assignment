@@ -10,7 +10,6 @@ import requests
 from faker import Faker
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
-from playwright.sync_api import sync_playwright, Browser, Page
 
 from app.database import Base, get_engine, get_sessionmaker
 from app.models.user import User
@@ -221,6 +220,9 @@ def fastapi_server():
 @pytest.fixture(scope="session")
 def browser_context():
     """Provide a Playwright browser context for UI tests (session-scoped)."""
+    # Import Playwright only when this fixture is used
+    from playwright.sync_api import sync_playwright
+    
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(
             headless=True,
@@ -234,7 +236,7 @@ def browser_context():
             browser.close()
 
 @pytest.fixture
-def page(browser_context: Browser):
+def page(browser_context):
     """
     Provide a new browser page for each test, with a standard viewport.
     Closes the page and context after each test.
