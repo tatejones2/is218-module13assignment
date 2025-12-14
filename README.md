@@ -1,7 +1,5 @@
 # IS218 Module 13 - JWT Authentication with E2E Testing
 
-## 📋 Submission
-
 ### GitHub Repository
 **Repository Link:** [https://github.com/tatejones2/is218-module13assignment](https://github.com/tatejones2/is218-module13assignment)
 
