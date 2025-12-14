@@ -13,7 +13,10 @@ Tests cover:
 
 import pytest
 import time
-from playwright.sync_api import Page
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from playwright.sync_api import Page
 
 
 class TestRegistrationE2E:
