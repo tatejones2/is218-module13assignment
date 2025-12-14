@@ -50,7 +50,7 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
-          pip install --upgrade pip
+          pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
       
       - name: Install Playwright browsers
@@ -69,7 +69,8 @@ jobs:
         run: |
           source venv/bin/activate
           # E2E tests use conftest.py fixtures to start the app and use the postgres service
-          pytest tests/e2e/ -v --tb=short
+          # Increase default timeout and run with verbose output
+          pytest tests/e2e/ -v --tb=short --timeout=60
           
           exit $?
 
