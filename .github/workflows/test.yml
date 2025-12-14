@@ -69,16 +69,13 @@ jobs:
         run: |
           source venv/bin/activate
           
-          # Install docker-compose
-          pip install docker-compose
-          
-          # Start services with docker-compose
-          docker-compose up -d
+          # Start services with docker compose (newer version, no hyphen)
+          docker compose up -d
           
           # Wait for services to be healthy
           echo "Waiting for services to be ready..."
           for i in {1..30}; do
-            if docker exec $(docker-compose ps -q postgres) pg_isready -U postgres > /dev/null 2>&1; then
+            if docker exec $(docker compose ps -q postgres) pg_isready -U postgres > /dev/null 2>&1; then
               echo "✅ PostgreSQL is ready"
               break
             fi
@@ -97,10 +94,10 @@ jobs:
           
           # Show logs for debugging
           echo "=== Docker Compose Logs ==="
-          docker-compose logs
+          docker compose logs
           
           # Bring down services
-          docker-compose down -v
+          docker compose down -v
           
           exit $E2E_EXIT_CODE
 
