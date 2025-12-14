@@ -69,13 +69,16 @@ jobs:
         run: |
           source venv/bin/activate
           
+          # Clean up any previous containers
+          docker compose down -v --remove-orphans || true
+          
           # Start services with docker compose (newer version, no hyphen)
           docker compose up -d
           
           # Wait for services to be healthy
           echo "Waiting for services to be ready..."
           for i in {1..30}; do
-            if docker exec $(docker compose ps -q postgres) pg_isready -U postgres > /dev/null 2>&1; then
+            if docker compose exec -T postgres pg_isready -U postgres > /dev/null 2>&1; then
               echo "✅ PostgreSQL is ready"
               break
             fi
@@ -97,9 +100,15 @@ jobs:
           docker compose logs
           
           # Bring down services
-          docker compose down -v
+          docker compose down -v --remove-orphans || true
           
           exit $E2E_EXIT_CODE
+      
+      - name: Cleanup on failure
+        if: failure()
+        run: |
+          docker compose down -v --remove-orphans || true
+          docker system prune -af || true
 
   security:
     needs: test
