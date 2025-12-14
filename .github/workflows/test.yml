@@ -70,19 +70,19 @@ jobs:
           source venv/bin/activate
           
           # Kill any lingering docker processes on port 5432 and 8000
-          sudo lsof -ti:5432,8000 | xargs kill -9 2>/dev/null || true
+          sudo lsof -ti:5432,8000 | xargs sudo kill -9 2>/dev/null || true
           
           # Clean up any previous containers and volumes
-          docker compose down -v --remove-orphans || true
-          docker system prune -af --volumes || true
+          docker compose down -v --remove-orphans 2>/dev/null || true
+          docker system prune -af --volumes 2>/dev/null || true
           
-          # Start services with docker compose
-          docker compose up -d
+          # Start services with docker compose using CI override (removes port bindings)
+          docker compose -f docker-compose.yml -f docker-compose.ci.yml up -d
           
           # Wait for services to be healthy
           echo "Waiting for services to be ready..."
           for i in {1..30}; do
-            if docker compose exec -T db pg_isready -U postgres -d fastapi_db > /dev/null 2>&1; then
+            if docker compose -f docker-compose.yml -f docker-compose.ci.yml exec -T db pg_isready -U postgres -d fastapi_db > /dev/null 2>&1; then
               echo "✅ PostgreSQL is ready"
               break
             fi
@@ -93,7 +93,6 @@ jobs:
           sleep 5
           
           # Run E2E tests
-          source venv/bin/activate
           pytest tests/e2e/ -v --tb=short
           
           # Capture exit code
@@ -101,10 +100,10 @@ jobs:
           
           # Show logs for debugging
           echo "=== Docker Compose Logs ==="
-          docker compose logs
+          docker compose -f docker-compose.yml -f docker-compose.ci.yml logs
           
           # Bring down services
-          docker compose down -v --remove-orphans || true
+          docker compose -f docker-compose.yml -f docker-compose.ci.yml down -v --remove-orphans 2>/dev/null || true
           
           exit $E2E_EXIT_CODE
 

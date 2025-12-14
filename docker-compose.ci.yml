@@ -1,0 +1,8 @@
+# CI/CD Override - Remove port bindings to prevent conflicts with host ports
+services:
+  web:
+    ports: []
+  db:
+    ports: []
+  pgadmin:
+    ports: []
