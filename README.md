@@ -1,3 +1,5 @@
+**README file contains instructions on how to run the front-end, execute Playwright tests, and links to the Docker Hub repository.**
+
 # IS218 Module 13 - JWT Authentication with E2E Testing
 
 ### GitHub Repository
